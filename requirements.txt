@@ -1,0 +1,8 @@
+faker
+Flask
+Flask-SQLAlchemy
+Flask-Migrate
+psycopg2-binary
+Flask-Seeder
+python-dotenv
+flask-cors

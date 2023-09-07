@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from flask_seeder import FlaskSeeder
 from dotenv import load_dotenv
 from flask_cors import CORS
+from routes import accounts, transactions
 import os
 
 load_dotenv()
@@ -29,9 +30,9 @@ def create_app(config_class=Config):
     allowed_origins = os.environ.get("ALLOWED_ORIGINS", "").split(",")
     CORS(app, resources={r'*': {'origins': allowed_origins}})
 
-    # Import and register Blueprints
     from app import models, seeds
-    from app.routes import bp as routes_bp
-    app.register_blueprint(routes_bp)
+    
+    app.register_blueprint(accounts.bp)
+    app.register_blueprint(transactions.bp)
 
     return app

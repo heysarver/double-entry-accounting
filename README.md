@@ -1,4 +1,4 @@
-# accounting-api
+# double-entry-accounting
 A double-entry accounting system REST API implementation
 
 Flask

@@ -30,7 +30,6 @@ class Transaction(Base):
     amount = db.Column(db.BigInteger, nullable=False)
     currency = db.Column(db.String(8), nullable=False, default='USD')
     account_id = db.Column(db.Uuid, db.ForeignKey('accounts.id', ondelete='CASCADE'), nullable=False)
-    # account_number = db.Column(db.Integer, nullable=False)
     direction = db.Column(db.Integer, nullable=False)
     account = db.relationship('Account', backref=db.backref('transactions', lazy=True))
 
@@ -38,10 +37,9 @@ class Transaction(Base):
         return {
             'id': str(self.id),
             'company_id': str(self.company_id),
-            'txn_id': self.txnid,
+            'txn_id': self.txn_id,
             'date': self.date,
             'amount': self.amount,
             'currency': self.currency,
-            # 'account_number': self.account_number,
-            'direction': self.account_number,
+            'direction': self.direction,
         }

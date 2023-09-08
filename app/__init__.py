@@ -37,9 +37,8 @@ def create_app(config_class=Config):
 
     from app import models, seeds # verify if this is needed for migrating or seeding
     
-    from .routes import accounts, transactions, reports
+    from .routes import accounts, transactions
     app.register_blueprint(accounts.bp)
     app.register_blueprint(transactions.bp)
-    app.register_blueprint(reports.bp)
 
     return app

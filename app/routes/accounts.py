@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request, g
 from app import db
 from app.models import Account
-from .utils import check_missing_fields, get_resource_by_id, create_resource, update_resource, get_company_id_header
+from .utils import get_resource_by_id, create_resource, update_resource, get_company_id_header, execute_query
 
 bp = Blueprint('accounts', __name__)
 
@@ -31,3 +31,41 @@ def update_account(account_id):
     data = request.get_json() or {}
     account = get_resource_by_id(Account, account_id)
     return update_resource(account, data)
+
+# Read-Only Views
+@bp.route('/v1/accounts/expressions/all', methods=['GET'])
+def get_vw_account_expressions_all():
+    query = """
+        SELECT expression 
+        FROM vw_account_expressions_all 
+        WHERE company_id = %s;
+    """
+    return jsonify(execute_query(query))
+
+@bp.route('/v1/accounts/expressions/rolled', methods=['GET'])
+def get_vw_account_expressions_rolled():
+    query = """
+        SELECT expression
+        FROM vw_account_expressions_rolled
+        WHERE company_id = %s;
+    """
+    return jsonify(execute_query(query))
+
+@bp.route('/v1/accounts/equation', methods=['GET'])
+def get_vw_account_equation():
+    query = """
+        SELECT equation
+        FROM vw_account_equation
+        WHERE company_id = %s;
+    """
+    return jsonify(execute_query(query))
+
+@bp.route('/v1/accounts/balances', methods=['GET'])
+def get_vw_account_balances():
+    query = """
+        SELECT number, name, balance
+        FROM vw_account_balances
+        WHERE company_id = %s
+        ORDER BY number;
+    """
+    return jsonify(execute_query(query))

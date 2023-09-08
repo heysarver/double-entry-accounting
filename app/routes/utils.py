@@ -1,5 +1,17 @@
 from flask import g, jsonify, request
+from app import get_db_connection
 from app import db
+
+def execute_query(query):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute(query, (g.company_id,))
+    res = cur.fetchall()
+    col_names = [desc[0] for desc in cur.description]
+    data = [dict(zip(col_names, row)) for row in res]
+    cur.close()
+    conn.close()
+    return data
 
 def check_missing_fields(data, required_fields):
     return [field for field in required_fields if field not in data]

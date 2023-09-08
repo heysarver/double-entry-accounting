@@ -7,6 +7,7 @@ PostgreSQL
 Todo:
  - Documentation
  - Refactor app files
+ - Fix create/update transaction pair to be a single request
 
 Database modeled from https://blog.journalize.io/posts/an-elegant-db-schema-for-double-entry-accounting/
 

@@ -5,9 +5,10 @@ Flask
 PostgreSQL
 
 Todo:
+ - Fix create/update transaction pair to be a single request
+ - make company-id header optional for single-company implementations
  - Documentation
  - Refactor app files
- - Fix create/update transaction pair to be a single request
 
 Database modeled from https://blog.journalize.io/posts/an-elegant-db-schema-for-double-entry-accounting/
 

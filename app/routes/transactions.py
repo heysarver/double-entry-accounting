@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify, request, g
 from app import db
 from app.models import Transaction
 from .utils import get_resource_by_id, create_resource, update_resource, get_company_id_header, execute_query
+import logging
+import uuid
 
 bp = Blueprint('transactions', __name__)
 
@@ -23,14 +25,38 @@ def get_transaction(transaction_id):
 @bp.route('/v1/transactions/', methods=['POST'])
 def create_transaction():
     data = request.get_json() or {}
-    required_fields = ['account_id', 'amount', 'currency', 'date', 'direction', 'txn_id']
-    return create_resource(Transaction, data, required_fields)
 
-@bp.route('/v1/transactions/<uuid:transaction_id>', methods=['PUT'])
-def update_transaction(transaction_id):
-    data = request.get_json() or {}
-    transaction = get_resource_by_id(Transaction, transaction_id)
-    return update_resource(transaction, data)
+    txn_common = {}
+    txn_debit = {}
+    txn_credit = {}
+
+    txn_common['txn_id'] = str(uuid.uuid4())
+    txn_common['date'] = data['date']
+    txn_common['currency'] = data['currency']
+    txn_common['amount'] = data['amount']
+    
+    txn_debit.update(txn_common)
+    txn_credit.update(txn_common)
+
+    txn_debit['account_id'] = data['debit_account']
+    txn_credit['account_id'] = data['credit_account']
+    txn_debit['direction'] = 1
+    txn_credit['direction'] = -1
+
+    required_fields = ['account_id', 'amount', 'currency', 'date', 'direction', 'txn_id']
+
+    # Needs error handling badly
+    debit = create_resource(Transaction, txn_debit, required_fields)
+    credit = create_resource(Transaction, txn_credit, required_fields)
+
+    return jsonify(txn_common.to_dict()), 201
+
+# ## Shouldn't allow updating to keep data integrity, delete then recreate instead
+# @bp.route('/v1/transactions/<uuid:transaction_id>', methods=['PUT'])
+# def update_transaction(transaction_id):
+#     data = request.get_json() or {}
+#     transaction = get_resource_by_id(Transaction, transaction_id)
+#     return update_resource(transaction, data)
 
 # Read-Only Views
 @bp.route('/v1/transactions/detail/accounts', methods=['GET'])
